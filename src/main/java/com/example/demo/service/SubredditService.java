@@ -25,10 +25,8 @@ public class SubredditService {
     private final AuthService authService;
 
     @Transactional
-    public Subreddit save(SubredditDto subredditDto){
-
-        
-        User user = authService.getCurrentUser();
+    public Subreddit save(SubredditDto subredditDto){   // some issue, user's whole object is shown in response along with pass.
+        User user = authService.getCurrentUser();          // TODO: 25-06-2020 user shouldnt comeeee
         Subreddit subreddit = subredditRepository.save(subredditMapper.mapDtoToSubreddit(subredditDto,user));
          subredditDto.setId(subreddit.getId());
         return subreddit;

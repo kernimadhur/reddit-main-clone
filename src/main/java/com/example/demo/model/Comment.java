@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 import static javax.persistence.FetchType.LAZY;
@@ -19,7 +20,7 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @NotEmpty
+    @NotNull
     private String text;
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "postId", referencedColumnName = "postId")
