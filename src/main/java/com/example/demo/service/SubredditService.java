@@ -26,6 +26,7 @@ public class SubredditService {
 
     @Transactional
     public Subreddit save(SubredditDto subredditDto){
+
         
         User user = authService.getCurrentUser();
         Subreddit subreddit = subredditRepository.save(subredditMapper.mapDtoToSubreddit(subredditDto,user));
