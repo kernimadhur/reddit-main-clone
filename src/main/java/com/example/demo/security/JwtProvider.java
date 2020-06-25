@@ -3,6 +3,7 @@ package com.example.demo.security;
 import com.example.demo.exception.RedditException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,9 @@ import java.security.cert.CertificateException;
 public class JwtProvider {
 
     private  KeyStore keyStore;
+
+    @Value("${jwt.expiration.time")
+    private Long jwtExpirationInMillis;
 
     @PostConstruct                      //Spring calls methods annotated with @PostConstruct only once, just after the initialization of bean properties.
     public void init(){
