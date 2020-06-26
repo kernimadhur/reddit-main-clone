@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.AutheticationResponse;
 import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.RefreshTokenRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.exception.RedditException;
 import com.example.demo.model.NotificationEmail;
@@ -35,6 +36,7 @@ public class AuthService {
     private final MailService mailService;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional                                                      //annotation needed as we are interacting with the relational DB
     public void signUp(RegisterRequest registerRequest) {
@@ -95,6 +97,23 @@ public class AuthService {
                     loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         String token = jwtProvider.generateToken(authenticate);
-        return new AutheticationResponse(token, loginRequest.getUserName());
+        return AutheticationResponse.builder()
+                .autheticationToken(token)
+                .refreshToken(refreshTokenService.generateRefreshToken().getToken())                   // now empty refresh token with exp. time added in login response
+                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .username(loginRequest.getUserName())
+                .build();
+
+    }
+
+    public AutheticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+        String token = jwtProvider.generateTokenWithUserName(refreshTokenRequest.getUsername());
+        return AutheticationResponse.builder()
+                .autheticationToken(token)
+                .refreshToken(refreshTokenRequest.getRefreshToken())
+                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .username(refreshTokenRequest.getUsername())
+                .build();
     }
 }

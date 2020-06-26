@@ -9,17 +9,20 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.time.Instant;
+import java.util.Date;
 
 @Service
 public class JwtProvider {
 
     private  KeyStore keyStore;
 
-    @Value("${jwt.expiration.time")
+    @Value("${jwt.expiration.time}")
     private Long jwtExpirationInMillis;
 
     @PostConstruct                      //Spring calls methods annotated with @PostConstruct only once, just after the initialization of bean properties.
@@ -37,7 +40,10 @@ public class JwtProvider {
     public String generateToken(Authentication authentication){
         User principal = (User) authentication.getPrincipal();
         return Jwts.builder().setSubject(principal.getUsername())
-                .signWith(getPrivateKey()).compact();
+                .signWith(getPrivateKey())
+                .setIssuedAt(Date.from(Instant.now()))
+                .setExpiration(Date.from(Instant.now().plusMillis(jwtExpirationInMillis)))                      // for refresh token
+                .compact();
     }
 
     private Key getPrivateKey() {
@@ -68,5 +74,16 @@ public class JwtProvider {
         return claims.getSubject();
      }
 
+    public Long getJwtExpirationInMillis() {
+        return jwtExpirationInMillis;
+    }
+
+    public String generateTokenWithUserName(String userName) {
+        return Jwts.builder().setSubject(userName)
+                .setIssuedAt(Date.from(Instant.now()))
+                .setExpiration(Date.from(Instant.now().plusMillis(jwtExpirationInMillis)))
+                .signWith(getPrivateKey())
+                .compact();
+    }
 }
 
