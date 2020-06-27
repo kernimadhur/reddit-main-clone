@@ -1,4 +1,4 @@
-package com.example.demo.Controller;
+package com.example.demo.controller;
 
 import com.example.demo.dto.AutheticationResponse;
 import com.example.demo.dto.LoginRequest;
@@ -8,7 +8,6 @@ import com.example.demo.exception.RedditException;
 import com.example.demo.service.AuthService;
 import com.example.demo.service.RefreshTokenService;
 import lombok.AllArgsConstructor;
-import lombok.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,14 +1,10 @@
-package com.example.demo.Config;
+package com.example.demo.config;
 
-import com.example.demo.security.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,7 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @AllArgsConstructor
@@ -38,7 +33,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {              
     public void configure(HttpSecurity httpSecurity) throws Exception {
             httpSecurity.csrf().disable().                                        // "csrf" csrf attacks occur mainly when there are sessions and we are using cookies
                     authorizeRequests().antMatchers("/api/auth/**").permitAll()   // to authenticate session info but rest api are stateless and we're using json web tokens
-                  //  .antMatchers(HttpMethod.GET,"/api/subreddit").permitAll()
+                    .antMatchers(HttpMethod.GET,"/api/subreddit").permitAll()
+                    .antMatchers("/v2/api-docs",
+                            "/configuration/ui",
+                            "/swagger-resources/**",
+                            "/configuration/security",
+                            "/swagger-ui.html",
+                            "/webjars/**").permitAll()
                     .anyRequest().authenticated();
       //      httpSecurity.addFilterBefore(jwtA, UsernamePasswordAuthenticationFilter.class);         // To make springSecurity know about our JwtAuthenticationFilter class
     }
